@@ -1,0 +1,30 @@
+[package]
+name = "adb-signing-server-rs"
+version = "0.1.0"
+edition = "2021"
+authors = [ "Adam Gastineau <adam@agg.im>" ]
+
+[package.metadata.release]
+release = false
+
+# https://github.com/rustwasm/wasm-pack/issues/1247
+[package.metadata.wasm-pack.profile.release]
+wasm-opt = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+rsa = { version = "0.9.7" }
+sha1 = { version = "0.10.6", features = ["oid"] }
+base64 = "0.22.1"
+serde = "1.0"
+serde_json = "1.0"
+# Fix WASM for RSA
+getrandom = { version = "0.2", features = ["js"] }
+num-bigint = { version = "0.8.4", package = "num-bigint-dig" }
+# Worker
+worker = { version="0.5.0", features = ["http"] }
+worker-macros = { version = "0.5.0", features = ["http"] }
+tower-service = "0.3.2"
+console_error_panic_hook = { version = "0.1.1" }
