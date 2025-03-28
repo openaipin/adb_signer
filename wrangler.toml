@@ -1,4 +1,4 @@
-name = "adb-signing-server-rs"
+name = "adb"
 main = "build/worker/shim.mjs"
 compatibility_date = "2025-03-27"
 
