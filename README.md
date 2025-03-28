@@ -26,3 +26,9 @@ PRIVATE_KEY=""
 # Redirect URL if the worker receives a normal GET request
 REDIRECT_URL="https://example.com"
 ```
+
+## FAQ
+
+### Why Rust
+
+I intended to write this in Cloudflare Workers' native Node, but I couldn't get the signing to work correctly. I gave up and used a known good implementation.
