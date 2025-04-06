@@ -14,14 +14,21 @@ mod types;
 async fn main(req: Request, env: Env, _ctx: Context) -> Result<Response> {
     console_error_panic_hook::set_once();
 
-    wrap_future_with_error(async move {
+    let mut response = wrap_future_with_error(async move {
         match req.method() {
             Method::Get => http_get_redirect(env).await,
             Method::Post => sign(req, env).await,
             _ => Ok(ErrorResponse::new("Unsupported method", 400)),
         }
     })
-    .await
+    .await;
+
+    // Apply shared CORS headers to all responses
+    let _ = response
+        .headers_mut()
+        .set("Access-Control-Allow-Origin".into(), "*".into());
+
+    Ok(response)
 }
 
 async fn http_get_redirect(env: Env) -> Result<Response> {
@@ -59,10 +66,11 @@ async fn sign(mut req: Request, env: Env) -> Result<Response> {
     let token = BASE64_STANDARD.encode(token);
 
     let response = SignResponse { token, public_key };
+
     Ok(Response::from_json(&response)?.with_status(200))
 }
 
-async fn wrap_future_with_error<F>(future: F) -> Result<Response>
+async fn wrap_future_with_error<F>(future: F) -> Response
 where
     F: Future<Output = Result<Response>>,
 {
@@ -71,5 +79,5 @@ where
         Err(err) => ErrorResponse::new(&err.to_string(), 400),
     };
 
-    Ok(output)
+    output
 }
